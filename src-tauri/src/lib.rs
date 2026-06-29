@@ -1,8 +1,28 @@
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+
+use tauri::Manager;
+
+mod paths;
+
 #[tauri::command]
-fn greet(name: &str) -> String {
+fn get_dictionaries() -> String {
+    println!("get_dictionaries");
+    let test = "asdasd";
+    return test.to_string();
+}
+
+fn is_word_in_dictionary(name: &str, word: &str) -> bool {
+    return true
+}
+
+#[tauri::command]
+fn create_dictionary(name: &str, content: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
+}
+
+fn delete_dictionary(name: &str) {
+
 }
 
 /*
