@@ -1,14 +1,12 @@
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 
-mod env;
-use crate::env::Env;
+pub mod env;
+pub mod dictionaries;
+pub mod commands;
 
-mod dictionaries;
 use crate::dictionaries::Dictionaries;
-
-mod commands;
-
+use crate::env::Env;
 use tauri::Manager;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
