@@ -1,5 +1,7 @@
 
 use crate::features::dictionaries::Dictionaries;
+use crate::features::dictionaries::DictionaryEntry;
+
 use std::sync::Mutex;
 
 pub type DictionariesState = Mutex<Dictionaries>;
@@ -27,23 +29,35 @@ pub fn get_dictionaries(
 }
 
 #[tauri::command]
-pub fn is_word_in_dictionary(
+pub fn lookup_word(
     dictionaries: tauri::State<'_, DictionariesState>,
     dictionary_name: &str,
     word: &str
-) -> DictionariesCommandResponse<bool> {
+) -> DictionariesCommandResponse<DictionaryEntry> {
     println!("is_word_in_dictionary");
     println!("dictionary_name: {}", dictionary_name);
     println!("word: {}", word);
     let dictionaries = dictionaries.lock().unwrap();
-    let is_word_in_dictionary = dictionaries.is_word_in_dictionary(&dictionary_name, &word);
-    return DictionariesCommandResponse {
-        ok: true,
-        error_msg: None,
-        result: Some(is_word_in_dictionary)
+    match dictionaries.lookup_word(&dictionary_name, &word) {
+        Some(dictionary_entry) => {
+            return DictionariesCommandResponse {
+                ok: true,
+                error_msg: None,
+                result: Some(dictionary_entry.clone())
+            }
+        }
+        None => {
+            return DictionariesCommandResponse {
+                ok: true,
+                error_msg: None,
+                result: None
+            }
+        }
     }
+
 }
 
+/*
 #[tauri::command]
 pub fn create_dictionary(
     dictionaries: tauri::State<'_, DictionariesState>,
@@ -92,3 +106,5 @@ pub fn delete_dictionary(
         }
     }
 }
+
+*/

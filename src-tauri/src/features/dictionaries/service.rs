@@ -1,6 +1,12 @@
 
-use super::Dictionaries;
-use super::DictHashMap;
+use serde::de::value::Error;
+
+use super::{
+    Dictionaries,
+    DictionaryHashMap,
+    DictionaryEntry,
+    DictionaryEntries
+};
 
 impl Dictionaries {
 
@@ -8,7 +14,7 @@ impl Dictionaries {
         dir: &std::path::PathBuf
     ) -> std::io::Result<Self> {
 
-        let mut hash_map = DictHashMap::new();
+        let mut dictionary_hash_map = DictionaryHashMap::new();
 
         for dictionary_file_result in dir.read_dir().expect("Failed to read dir") {
             match dictionary_file_result {
@@ -16,12 +22,22 @@ impl Dictionaries {
                     if file.file_type()?.is_file() {
                         let dictionary_name = file.path().file_prefix().unwrap().to_string_lossy().to_string();
                         let words = std::fs::read_to_string(file.path())?;
-                        let mut value: Vec<String> = words
-                            .lines()
-                            .map(|s| s.to_string())
-                            .collect();
-                        value.sort();
-                        hash_map.insert(dictionary_name, value);
+                        let mut dictionary_entries: DictionaryEntries = Vec::new();
+                        for line in words.lines() {
+                            match line.split_once(' ') {
+                                Some((word, description)) => {
+                                    dictionary_entries.push(
+                                        DictionaryEntry {
+                                            word: word.to_ascii_uppercase(),
+                                            description: description.to_string()
+                                        }
+                                    );
+                                }
+                                None => {}
+                            };
+                        };
+                        dictionary_entries.sort();
+                        dictionary_hash_map.insert(dictionary_name, dictionary_entries);
                     }
                 }
                 Err(e) => {
@@ -32,7 +48,7 @@ impl Dictionaries {
 
         Ok(Self {
             dir: dir.to_path_buf(),
-            hash_map: hash_map
+            dictionary_hash_map
         })
 
     }
@@ -42,8 +58,8 @@ impl Dictionaries {
 impl Dictionaries {
 
     pub fn get_dictionaries(&self) -> Vec<String> {
-        let mut dictionary_names: Vec<String> = Vec::with_capacity(self.hash_map.len());
-        for (dictionary_name, _) in self.hash_map.iter() {
+        let mut dictionary_names: Vec<String> = Vec::with_capacity(self.dictionary_hash_map.len());
+        for (dictionary_name, _) in self.dictionary_hash_map.iter() {
             dictionary_names.push(dictionary_name.to_string());
         };
         dictionary_names.sort();
@@ -54,24 +70,36 @@ impl Dictionaries {
 
 impl Dictionaries {
 
-    pub fn is_word_in_dictionary(
+    pub fn lookup_word(
         &self,
         dictionary_name: &str,
         word: &str
-    ) -> bool {
-        let dictionary_words: &Vec<String> = self.hash_map.get(dictionary_name).unwrap();
-        let index: Result<usize, usize> = dictionary_words.binary_search(&word.to_string());
-        match index {
-            Ok(_) => {
-                return true
+    ) -> Option<&DictionaryEntry> {
+
+        if !word.is_ascii() {
+            return None;
+        };
+
+        let dictionary_entries = self.dictionary_hash_map.get(dictionary_name).unwrap();
+        let binary_search_result: Result<usize, usize> = dictionary_entries.binary_search(
+            &DictionaryEntry {
+                word: word.to_ascii_uppercase(),
+                description: "".to_string()
+            }
+        );
+        match binary_search_result {
+            Ok(i) => {
+                return Some(&dictionary_entries[i])
             }
             Err(_) => {
-                return false
+                return None
             }
         }
     }
 
 }
+
+/*
 
 impl Dictionaries {
 
@@ -94,10 +122,11 @@ impl Dictionaries {
 
         std::fs::write(created_dictionary_path, words)?;
 
-        let value: Vec<String> = words
+        let mut value: Vec<String> = words
             .lines()
-            .map(|s| s.to_string())
+            .map(|s| s.to_ascii_lowercase())
             .collect();
+        value.sort();
 
         self.hash_map.insert(dictionary_name.to_string(), value);
 
@@ -128,3 +157,5 @@ impl Dictionaries {
     }
 
 }
+
+*/

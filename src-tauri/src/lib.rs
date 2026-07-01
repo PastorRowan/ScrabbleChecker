@@ -55,9 +55,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             commands::dictionaries::get_dictionaries,
-            commands::dictionaries::is_word_in_dictionary,
-            commands::dictionaries::create_dictionary,
-            commands::dictionaries::delete_dictionary
+            commands::dictionaries::lookup_word,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -38,7 +38,12 @@ type ResponseBase<T = undefined> = {
 
 type GetDictionariesResponse = ResponseBase<string[]>
 
-type IsWordInDictionaryResponse = ResponseBase<boolean>
+type DictionaryEntry = {
+    word: string,
+    description: string
+}
+
+type LookUpWordResponse = ResponseBase<DictionaryEntry>
 
 type CreateDictionaryResponse = ResponseBase
 
@@ -88,7 +93,7 @@ function App() {
 
         // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 
-        const response: IsWordInDictionaryResponse = await invoke(
+        const response: LookUpWordResponse = await invoke(
             "is_word_in_dictionary",
             {
                 dictionaryName: "dictionary",
@@ -103,7 +108,7 @@ function App() {
             return;
         };
 
-        if (response.result) {
+        if (response.result !== undefined) {
             setIsWordValid(true);
         } else {
             setIsWordValid(false);
