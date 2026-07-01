@@ -15,9 +15,9 @@ impl Dictionaries {
                 Ok(file) => {
 
                     if file.file_type()?.is_file() {
-                        let dictionary_name = file.file_name()
-                            .to_string_lossy()
-                            .to_string();
+                        let dictionary_name = file
+                            .path()
+                            .set_extension("");
                         let words = std::fs::read_to_string(file.path())?;
                         let value = words
                             .lines()
@@ -40,6 +40,10 @@ impl Dictionaries {
 
     }
 
+}
+
+impl Dictionaries {
+
     pub fn get_dictionaries(&self) -> Vec<String> {
         let mut dictionary_names: Vec<String> = Vec::with_capacity(self.hash_map.len());
         for (dictionary_name, _) in self.hash_map.iter() {
@@ -48,6 +52,10 @@ impl Dictionaries {
         dictionary_names.sort();
         return dictionary_names
     }
+
+}
+
+impl Dictionaries {
 
     pub fn is_word_in_dictionary(
         &self,
@@ -66,13 +74,27 @@ impl Dictionaries {
         }
     }
 
+}
+
+impl Dictionaries {
+
     pub fn create_dictionary(
         &mut self,
         dictionary_name: &str,
         words: &str
     ) -> std::io::Result<()> {
 
+        let path = std::path::Path::new(dictionary_name);
+
+        if !dictionary_name.is_ascii() || path.extension().is_some() {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidInput,
+                "Invalid dictionary name"
+            ));
+        };
+
         let created_dictionary_path = self.dir.join(dictionary_name);
+
         std::fs::write(created_dictionary_path, words)?;
 
         let value: Vec<String> = words
@@ -82,9 +104,13 @@ impl Dictionaries {
 
         self.hash_map.insert(dictionary_name.to_string(), value);
 
-        Ok(())
+        return Ok(())
 
     }
+
+}
+
+impl Dictionaries {
 
     pub fn delete_dictionary(
         &mut self,
