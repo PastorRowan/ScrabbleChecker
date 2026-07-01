@@ -10,22 +10,19 @@ impl Dictionaries {
 
         let mut hash_map = DictHashMap::new();
 
-        for dictionary_file_result in dir.read_dir()? {
+        for dictionary_file_result in dir.read_dir().expect("Failed to read dir") {
             match dictionary_file_result {
                 Ok(file) => {
-
                     if file.file_type()?.is_file() {
-                        let dictionary_name = file
-                            .path()
-                            .set_extension("");
+                        let dictionary_name = file.path().file_prefix().unwrap().to_string_lossy().to_string();
                         let words = std::fs::read_to_string(file.path())?;
-                        let value = words
+                        let mut value: Vec<String> = words
                             .lines()
                             .map(|s| s.to_string())
                             .collect();
-                        hash_map.insert(dictionary_name.to_string(), value);
+                        value.sort();
+                        hash_map.insert(dictionary_name, value);
                     }
-
                 }
                 Err(e) => {
                     println!("Error reading dictionary file: {}", e)

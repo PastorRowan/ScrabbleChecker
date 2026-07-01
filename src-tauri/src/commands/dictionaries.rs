@@ -32,6 +32,9 @@ pub fn is_word_in_dictionary(
     dictionary_name: &str,
     word: &str
 ) -> DictionariesCommandResponse<bool> {
+    println!("is_word_in_dictionary");
+    println!("dictionary_name: {}", dictionary_name);
+    println!("word: {}", word);
     let dictionaries = dictionaries.lock().unwrap();
     let is_word_in_dictionary = dictionaries.is_word_in_dictionary(&dictionary_name, &word);
     return DictionariesCommandResponse {
@@ -56,7 +59,7 @@ pub fn create_dictionary(
                 result: None
             }
         }
-        Err(e) => {
+        Err(_) => {
             return DictionariesCommandResponse {
                 ok: false,
                 error_msg: Some("Failed to create dictionary".to_string()),
@@ -80,7 +83,7 @@ pub fn delete_dictionary(
                 result: None
             }
         }
-        Err(e) => {
+        Err(_) => {
             return DictionariesCommandResponse {
                 ok: false,
                 error_msg: Some("Failed to delete dictionary".to_string()),
