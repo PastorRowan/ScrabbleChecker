@@ -193,11 +193,19 @@ function App() {
 
             <Box>
                 <Button
+                    variant="contained"
                     onClick={(e) => onSelectedDictionaryButtonClick(e)}
                 >
                     {selectedDictionaryName} 
                 </Button>
             </Box>
+
+            <div
+                style={{
+                    width: "100%",
+                    height: "15px"
+                }}
+            ></div>
 
             <Box
                 sx={{
@@ -254,7 +262,7 @@ function App() {
                     <FormControl>
                         <FormLabel>{selectedDictionaryName}</FormLabel>
                         <RadioGroup
-                            defaultValue={selectedDictionaryName}
+                            defaultValue={selectedDictionaryIndex}
                             name="radio-buttons-group"
                         >
                             {(

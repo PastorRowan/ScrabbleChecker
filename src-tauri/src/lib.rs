@@ -27,11 +27,6 @@ pub fn run() {
                     .unwrap()
                     .join("dictionaries");
 
-                std::fs::remove_dir_all(&dictionaries_rw_dir)
-                    .expect(
-                        format!("Failed to remove dir {}", dictionaries_rw_dir.display()).as_str()
-                    );
-
                 std::fs::create_dir_all(&dictionaries_rw_dir)
                     .expect(
                         format!("Failed to create dir {}", dictionaries_rw_dir.display()).as_str()

@@ -34,7 +34,7 @@ pub fn lookup_word(
     dictionary_name: &str,
     word: &str
 ) -> DictionariesCommandResponse<DictionaryEntry> {
-    println!("is_word_in_dictionary");
+    println!("lookup_word");
     println!("dictionary_name: {}", dictionary_name);
     println!("word: {}", word);
     let dictionaries = dictionaries.lock().unwrap();
