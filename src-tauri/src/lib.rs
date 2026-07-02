@@ -15,7 +15,10 @@ pub fn run() {
                 let dictionaries_ro_dir =
                     app
                     .path()
-                    .resolve("resources/dictionaries", tauri::path::BaseDirectory::Resource)?;
+                    .resolve(
+                        "resources/dictionaries",
+                        tauri::path::BaseDirectory::Resource
+                    )?;
 
                 let dictionaries_rw_dir =
                     app
@@ -24,9 +27,19 @@ pub fn run() {
                     .unwrap()
                     .join("dictionaries");
 
-                std::fs::create_dir_all(&dictionaries_rw_dir)?;
+                std::fs::remove_dir_all(&dictionaries_rw_dir)
+                    .expect(
+                        format!("Failed to remove dir {}", dictionaries_rw_dir.display()).as_str()
+                    );
 
-                for entry in dictionaries_ro_dir.read_dir()? {
+                std::fs::create_dir_all(&dictionaries_rw_dir)
+                    .expect(
+                        format!("Failed to create dir {}", dictionaries_rw_dir.display()).as_str()
+                    );
+
+                for entry in dictionaries_ro_dir
+                    .read_dir()
+                    .expect("Failed to read dir") {
                     let from = entry?.path();
                     let to = dictionaries_rw_dir.join(from.file_name().unwrap());
                     std::fs::copy(&from, &to)?;
@@ -39,7 +52,9 @@ pub fn run() {
                 };
 
                 let dictionary =
-                    features::dictionaries::Dictionaries::new(&dictionaries_rw_dir)?;
+                    features::dictionaries::Dictionaries::new(
+                        &dictionaries_rw_dir
+                    )?;
 
                 let dictionaries_state =
                     commands::dictionaries::DictionariesState::new(
@@ -48,9 +63,10 @@ pub fn run() {
 
                 app.manage(dictionaries_state);
 
-                Ok(())
+                return Ok(());
 
             }
+
         )
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![

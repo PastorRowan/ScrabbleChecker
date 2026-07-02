@@ -16,7 +16,6 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
-    DialogContentText,
     DialogActions,
     Radio,
     RadioGroup,
@@ -43,27 +42,63 @@ type DictionaryEntry = {
     description: string
 }
 
-type LookUpWordResponse = ResponseBase<DictionaryEntry>
+type LookUpWordResponse = ResponseBase<DictionaryEntry | null>
 
-type CreateDictionaryResponse = ResponseBase
+// type CreateDictionaryResponse = ResponseBase
 
-type DeleteDictionaryResponse = ResponseBase
+// type DeleteDictionaryResponse = ResponseBase
 
 function App() {
 
     const [ dictionaryNames, setDictionaryNames ] = useState<string[]>([]);
 
-    const [ selectedDictionary, setSelectedDictionary ] = useState<string>("");
+    const [ selectedDictionaryIndex, setSelectedDictionaryIndex ] = useState<number | null>(null);
+
+    const [ selectedDictionaryName, setSelectedDictionaryName  ] = useState<string>("No dictionary selected");
 
     const [ showSelectDictionaryDialogue, setShowSelectDictionaryDialogue ] = useState<boolean>(false);
 
-    const [ enteredWord, setWord ] = useState<string>("");
+    const [ enteredWord, setEnteredWord ] = useState<string>("");
 
     const [ showIsWordValid, setShowIsWordValid ] = useState<boolean>(false);
 
-    const [ isWordValid, setIsWordValid ] = useState<boolean>(false);
+    const [ isCheckedWordValid, setIsCheckedWordValid ] = useState<boolean>(false);
 
     const [ checkedWord, setCheckedWord ] = useState<string>("");
+
+    const [ checkedWordDescription, setCheckedWordDescription ] = useState<string>("");
+
+    useEffect(() => {
+        if (selectedDictionaryIndex === null) {
+            return;
+        };
+        setSelectedDictionaryName(
+            dictionaryNames[selectedDictionaryIndex]
+        );
+    }, [dictionaryNames, selectedDictionaryIndex]);
+
+    useEffect(() => {
+
+        async function fetchDictionaries() {
+
+            const response: GetDictionariesResponse = await invoke("get_dictionaries");
+
+            if (!response.ok) {
+                console.error(response.error_msg);
+                return;
+            };
+
+            setDictionaryNames(response.result);
+
+            if (response.result.length >= 1) {
+                setSelectedDictionaryIndex(0);
+            };
+
+        };
+
+        fetchDictionaries();
+
+    }, []);
 
     async function onSelectedDictionaryButtonClick(
         _: React.MouseEvent<HTMLButtonElement>
@@ -84,8 +119,20 @@ function App() {
 
     };
 
+    function handleTextFieldChange(
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement, Element>
+    ): void {
+        const newEnteredWord = e.currentTarget.value.toUpperCase();
+        const regexp =/^[A-Z]*$/;
+        if (!regexp.test(newEnteredWord)) {
+            return;
+        };
+        setEnteredWord(newEnteredWord);
+    };
+
     async function onCheckButtonClick(
-        e: React.MouseEvent<HTMLButtonElement>,
+        _: React.MouseEvent<HTMLButtonElement>,
+        dictionaryName: string,
         wordToCheck: string
     ): Promise<void> {
 
@@ -94,9 +141,9 @@ function App() {
         // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 
         const response: LookUpWordResponse = await invoke(
-            "is_word_in_dictionary",
+            "lookup_word",
             {
-                dictionaryName: "dictionary",
+                dictionaryName: dictionaryName,
                 word: wordToCheck
             }
         );
@@ -108,24 +155,36 @@ function App() {
             return;
         };
 
-        if (response.result !== undefined) {
-            setIsWordValid(true);
+        if (
+            response.result &&
+            response.result instanceof Object
+        ) {
+            setIsCheckedWordValid(true);
+            setCheckedWordDescription(response.result.description);
         } else {
-            setIsWordValid(false);
+            setIsCheckedWordValid(false);
+            setCheckedWordDescription("");
         };
 
-        setShowIsWordValid(true);
         setCheckedWord(wordToCheck);
+        setShowIsWordValid(true);
 
     };
 
-    function handleSelectDictionaryDialogueClose() {
-        setShowSelectDictionaryDialogue(false)
-    }
+    function handleSelectDictionaryDialogueClose(): void {
+        setShowSelectDictionaryDialogue(false);
+    };
 
-    function handleSelectDictionaryDialogueConfirm() {
-        setShowSelectDictionaryDialogue(false)
-    }
+    function handleSelectDictionaryDialogueConfirm(): void {
+        setShowSelectDictionaryDialogue(false);
+    };
+
+    function handleSelectDictionaryDialogueRadioButtonClick(
+        _: React.MouseEvent<HTMLLabelElement, MouseEvent>,
+        value: number
+    ): void {
+        setSelectedDictionaryIndex(value);
+    };
 
     return (
         <main className="container">
@@ -136,7 +195,7 @@ function App() {
                 <Button
                     onClick={(e) => onSelectedDictionaryButtonClick(e)}
                 >
-                    Select dictioanr 
+                    {selectedDictionaryName} 
                 </Button>
             </Box>
 
@@ -151,14 +210,11 @@ function App() {
                     id="input"
                     label="Enter a word"
                     variant="outlined"
-                    onChange={
-                        (e) => {
-                            setWord(e.currentTarget.value)
-                        }
-                    }
+                    value={enteredWord}
+                    onChange={(e) => handleTextFieldChange(e)}
                 />
                 <Button
-                    onClick={(e) => onCheckButtonClick(e, enteredWord)}
+                    onClick={(e) => onCheckButtonClick(e, selectedDictionaryName, enteredWord)}
                 >
                     Check
                 </Button>
@@ -168,10 +224,12 @@ function App() {
                 ? (
                     <Typography>
                         {
-                            isWordValid
+                            isCheckedWordValid
                                 ? (
                                     <>
                                         <CheckCircleIcon color="success"/> "{checkedWord}" is valid
+                                        <br />
+                                        {checkedWordDescription}
                                     </>
                                 )
                                 : (
@@ -193,22 +251,21 @@ function App() {
             >
                 <DialogTitle>Select a Dictionary</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
-                        Select a dictionary to verify words
-                    </DialogContentText>
                     <FormControl>
-                        <FormLabel>Selected dictionary</FormLabel>
+                        <FormLabel>{selectedDictionaryName}</FormLabel>
                         <RadioGroup
-                            defaultValue={selectedDictionary}
+                            defaultValue={selectedDictionaryName}
                             name="radio-buttons-group"
                         >
                             {(
-                                dictionaryNames.map((dictionaryName: string) => {
+                                dictionaryNames.map((dictionaryName: string, index: number) => {
                                     return (
                                         <FormControlLabel
-                                            value={dictionaryName}
+                                            value={index}
+                                            onClick={(e) => handleSelectDictionaryDialogueRadioButtonClick(e, index)}
                                             control={<Radio />}
                                             label={dictionaryName}
+                                            key={dictionaryName}
                                         />
                                     )
                                 })
@@ -226,7 +283,7 @@ function App() {
                         color="error"
                         variant="contained"
                     >
-                        Delete
+                        Confirm
                     </Button>
                 </DialogActions>
             </Dialog>
