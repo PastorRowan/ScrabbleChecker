@@ -31,7 +31,10 @@
             "icons/icon.icns",
             "icons/icon.ico"
         ],
-        "resources": ["resources/**/*"]
-
+        "resources": ["resources/**/*"],
+        "android": {
+            "versionCode": 100,
+            "minSdkVersion": 28
+        }
     }
 }

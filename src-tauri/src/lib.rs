@@ -12,35 +12,56 @@ pub fn run() {
         .setup(
             |app: &mut tauri::App| {
 
-                let dictionaries_ro_dir =
-                    app
-                    .path()
-                    .resolve(
-                        "resources/dictionaries",
-                        tauri::path::BaseDirectory::Resource
-                    )?;
+                const CSW21_WORD_LIST: &[u8] = include_bytes!("../resources/dictionaries/CSW21.txt");
+                const CSW24_WORD_LIST: &[u8] = include_bytes!("../resources/dictionaries/CSW24.txt");
+                const NSWL2018_WORD_LIST: &[u8] = include_bytes!("../resources/dictionaries/NSWL2018.txt");
+                const NSWL2020_WORD_LIST: &[u8] = include_bytes!("../resources/dictionaries/NSWL2020.txt");
+                const NSWL2023_WORD_LIST: &[u8] = include_bytes!("../resources/dictionaries/NSWL2023.txt");
+                const NWL2018_WORD_LIST: &[u8] = include_bytes!("../resources/dictionaries/NWL2018.txt");
+                const NWL2020_WORD_LIST: &[u8] = include_bytes!("../resources/dictionaries/NWL2020.txt");
+                const NWL2023_WORD_LIST: &[u8] = include_bytes!("../resources/dictionaries/NWL2023.txt");
+
+                let dictionary_files: [(&str, &[u8]); 8] = [
+                    ("CSW21.txt", CSW21_WORD_LIST),
+                    ("CSW24.txt", CSW24_WORD_LIST),
+                    ("NSWL2018.txt", NSWL2018_WORD_LIST),
+                    ("NSWL2020.txt", NSWL2020_WORD_LIST),
+                    ("NSWL2023.txt", NSWL2023_WORD_LIST),
+                    ("NWL2018.txt", NWL2018_WORD_LIST),
+                    ("NWL2020.txt", NWL2020_WORD_LIST),
+                    ("NWL2023.txt", NWL2023_WORD_LIST),
+                ];
 
                 let dictionaries_rw_dir =
                     app
                     .path()
                     .app_data_dir()
-                    .unwrap()
+                    .expect("Failed to create dictionaries_rw_dir PathBuf")
                     .join("dictionaries");
 
                 std::fs::create_dir_all(&dictionaries_rw_dir)
                     .expect(
-                        format!("Failed to create dir {}", dictionaries_rw_dir.display()).as_str()
+                        &format!("Failed to create_dir_all for dictionaries_rw_dir at {:?}", dictionaries_rw_dir.display())
                     );
 
-                for entry in dictionaries_ro_dir
-                    .read_dir()
-                    .expect("Failed to read dir") {
-                    let from = entry?.path();
-                    let to = dictionaries_rw_dir.join(from.file_name().unwrap());
-                    std::fs::copy(&from, &to)?;
+                for dictionary_file in dictionary_files {
+
+                    let ( file_name, content ) = dictionary_file;
+
+                    let to = dictionaries_rw_dir.join(file_name);
+
+                    std::fs::write(&to, content)
+                        .expect(
+                            &format!(
+                                "Failed to created dictionary file {:?} at {:?}",
+                                file_name,
+                                to.display()
+                            )
+                        );
+
                     println!(
-                        "Successfully copied {:?} to {:?}",
-                        from.display(),
+                        "Successfully created dictionary file {:?} at {:?}",
+                        file_name,
                         to.display()
                     );
 
@@ -49,7 +70,7 @@ pub fn run() {
                 let dictionary =
                     features::dictionaries::Dictionaries::new(
                         &dictionaries_rw_dir
-                    )?;
+                    ).expect("Failed to create dictionary");
 
                 let dictionaries_state =
                     commands::dictionaries::DictionariesState::new(

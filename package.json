@@ -7,7 +7,20 @@
         "dev": "vite",
         "build": "tsc && vite build",
         "preview": "vite preview",
-        "tauri": "tauri"
+        "tauri": "tauri",
+
+
+        "Run this before android-build-xxxx": "echo ^^^^",
+        "android-build-init-help": "tauri android init --help",
+        "android-build-init": "tauri android init",
+
+        "Run 'android-build-init' before then run with command line in adminastrator mode": "echo ^",
+        "Also make sure to have android studio installed with:": "echo ^",
+        "Android SDK, Android NDK 25, SDK Command-line Tools, and Java 25": "echo ^",
+        "ANDROID_HOME enviroment variable is 'C:\\Users\\user_name\\AppData\\Local\\Android\\Sdk'": "echo ^",
+        "rust targets will be installed automatically": "echo ^",
+        "android-build-help": "tauri android build --help",
+        "android-build-debug": "tauri android build --apk --target aarch64 --split-per-abi --debug"
     },
     "dependencies": {
         "@emotion/react": "^11.14.0",

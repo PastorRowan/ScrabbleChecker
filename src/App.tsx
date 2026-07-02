@@ -68,6 +68,8 @@ function App() {
 
     const [ checkedWordDescription, setCheckedWordDescription ] = useState<string>("");
 
+    const [ dialogueSelectedDictionaryIndex, setDialogueSelectedDictionaryIndex ] = useState<number | null >(null);
+
     useEffect(() => {
         if (selectedDictionaryIndex === null) {
             return;
@@ -100,8 +102,9 @@ function App() {
 
     }, []);
 
-    async function onSelectedDictionaryButtonClick(
-        _: React.MouseEvent<HTMLButtonElement>
+    async function handleSelectedDictionaryButtonClick(
+        _: React.MouseEvent<HTMLButtonElement>,
+        currentSelectedDictionaryIndex: number | null
     ): Promise<void> {
 
         const response: GetDictionariesResponse = await invoke("get_dictionaries");
@@ -115,7 +118,9 @@ function App() {
 
         setDictionaryNames(response.result);
 
-        setShowSelectDictionaryDialogue(true)
+        setDialogueSelectedDictionaryIndex(currentSelectedDictionaryIndex);
+
+        setShowSelectDictionaryDialogue(true);
 
     };
 
@@ -130,13 +135,13 @@ function App() {
         setEnteredWord(newEnteredWord);
     };
 
-    async function onCheckButtonClick(
+    async function handleCheckButtonClick(
         _: React.MouseEvent<HTMLButtonElement>,
         dictionaryName: string,
         wordToCheck: string
     ): Promise<void> {
 
-        console.log("onCheckButtonClick: ", wordToCheck);
+        console.log("handleCheckButtonClick: ", wordToCheck);
 
         // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 
@@ -175,7 +180,13 @@ function App() {
         setShowSelectDictionaryDialogue(false);
     };
 
-    function handleSelectDictionaryDialogueConfirm(): void {
+    function handleSelectDictionaryDialogueConfirm(
+        _: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+        newSelectedDictionaryIndex: number | null
+    ): void {
+        if (typeof newSelectedDictionaryIndex === "number") {
+            setSelectedDictionaryIndex(newSelectedDictionaryIndex);
+        };
         setShowSelectDictionaryDialogue(false);
     };
 
@@ -183,7 +194,7 @@ function App() {
         _: React.MouseEvent<HTMLLabelElement, MouseEvent>,
         value: number
     ): void {
-        setSelectedDictionaryIndex(value);
+        setDialogueSelectedDictionaryIndex(value);
     };
 
     return (
@@ -194,7 +205,7 @@ function App() {
             <Box>
                 <Button
                     variant="contained"
-                    onClick={(e) => onSelectedDictionaryButtonClick(e)}
+                    onClick={(e) => handleSelectedDictionaryButtonClick(e, selectedDictionaryIndex)}
                 >
                     {selectedDictionaryName} 
                 </Button>
@@ -222,7 +233,7 @@ function App() {
                     onChange={(e) => handleTextFieldChange(e)}
                 />
                 <Button
-                    onClick={(e) => onCheckButtonClick(e, selectedDictionaryName, enteredWord)}
+                    onClick={(e) => handleCheckButtonClick(e, selectedDictionaryName, enteredWord)}
                 >
                     Check
                 </Button>
@@ -255,14 +266,14 @@ function App() {
 
             <Dialog
                 open={showSelectDictionaryDialogue}
-                onClose={handleSelectDictionaryDialogueClose}
+                onClose={() => handleSelectDictionaryDialogueClose()}
             >
                 <DialogTitle>Select a Dictionary</DialogTitle>
                 <DialogContent>
                     <FormControl>
                         <FormLabel>{selectedDictionaryName}</FormLabel>
                         <RadioGroup
-                            defaultValue={selectedDictionaryIndex}
+                            defaultValue={dialogueSelectedDictionaryIndex}
                             name="radio-buttons-group"
                         >
                             {(
@@ -283,11 +294,11 @@ function App() {
                     </FormControl>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleSelectDictionaryDialogueClose}>
+                    <Button onClick={() => handleSelectDictionaryDialogueClose()}>
                         Cancel
                     </Button>
                     <Button
-                        onClick={handleSelectDictionaryDialogueConfirm}
+                        onClick={(e) => handleSelectDictionaryDialogueConfirm(e, dialogueSelectedDictionaryIndex)}
                         color="error"
                         variant="contained"
                     >
