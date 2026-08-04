@@ -1,0 +1,43 @@
+{
+    "name": "scrabblechecker",
+    "private": true,
+    "version": "0.1.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "preview": "vite preview",
+        "tauri": "tauri",
+
+
+        "Run this before android-build-xxxx": "echo ^^^^",
+        "android-build-init-help": "tauri android init --help",
+        "android-build-init": "tauri android init",
+
+        "Run 'android-build-init' before then run with command line in adminastrator mode": "echo ^",
+        "Also make sure to have android studio installed with:": "echo ^",
+        "Android SDK, Android NDK 25, SDK Command-line Tools, and Java 25": "echo ^",
+        "ANDROID_HOME enviroment variable is 'C:\\Users\\user_name\\AppData\\Local\\Android\\Sdk'": "echo ^",
+        "rust targets will be installed automatically": "echo ^",
+        "android-build-help": "tauri android build --help",
+        "android-build-debug": "tauri android build --apk --target aarch64 --split-per-abi --debug"
+    },
+    "dependencies": {
+        "@emotion/react": "^11.14.0",
+        "@emotion/styled": "^11.14.1",
+        "@mui/icons-material": "^9.1.1",
+        "@mui/material": "^9.1.2",
+        "@tauri-apps/api": "^2",
+        "@tauri-apps/plugin-opener": "^2",
+        "react": "^19.1.0",
+        "react-dom": "^19.1.0"
+    },
+    "devDependencies": {
+        "@tauri-apps/cli": "^2",
+        "@types/react": "^19.1.8",
+        "@types/react-dom": "^19.1.6",
+        "@vitejs/plugin-react": "^4.6.0",
+        "typescript": "~5.8.3",
+        "vite": "^7.0.4"
+    }
+}
