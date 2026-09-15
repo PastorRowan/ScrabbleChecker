@@ -21,9 +21,9 @@ impl Dictionaries {
                 Ok(file) => {
                     if file.file_type()?.is_file() {
                         let dictionary_name = file.path().file_prefix().unwrap().to_string_lossy().to_string();
-                        let words = std::fs::read_to_string(file.path())?;
+                        let dictionary_content = std::fs::read_to_string(file.path())?;
                         let mut dictionary_entries: DictionaryEntries = Vec::new();
-                        for line in words.lines() {
+                        for line in dictionary_content.lines() {
                             match line.split_once(' ') {
                                 Some((word, description)) => {
                                     dictionary_entries.push(

@@ -5,12 +5,19 @@ pub mod commands;
 pub mod features;
 
 use tauri::Manager;
+use tauri_plugin_fs::FsExt;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .setup(
             |app: &mut tauri::App| {
+
+                let dictionary_ro_dir =
+                    app
+                    .path()
+                    .resource_dir()
+                    .expect("Failed to read resources directory");
 
                 const CSW21_WORD_LIST: &[u8] = include_bytes!("../resources/dictionaries/CSW21.txt");
                 const CSW24_WORD_LIST: &[u8] = include_bytes!("../resources/dictionaries/CSW24.txt");
