@@ -4,8 +4,19 @@
 pub mod commands;
 pub mod features;
 
+use std::path::PathBuf;
+
 use tauri::Manager;
 use tauri_plugin_fs::FsExt;
+
+include!(concat!(env!("OUT_DIR"), "/dictionary_files.rs"));
+
+pub fn get_dictionary_files_dir(app: &mut tauri::App) -> PathBuf {
+    return app.path()
+        .resource_dir()
+        .expect("Failed to get resources directory")
+        .join("dictionaries");
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -13,33 +24,7 @@ pub fn run() {
         .setup(
             |app: &mut tauri::App| {
 
-                let dictionary_ro_dir =
-                    app
-                    .path()
-                    .resource_dir()
-                    .expect("Failed to read resources directory");
-
-                const CSW21_WORD_LIST: &[u8] = include_bytes!("../resources/dictionaries/CSW21.txt");
-                const CSW24_WORD_LIST: &[u8] = include_bytes!("../resources/dictionaries/CSW24.txt");
-                const NSWL2018_WORD_LIST: &[u8] = include_bytes!("../resources/dictionaries/NSWL2018.txt");
-                const NSWL2020_WORD_LIST: &[u8] = include_bytes!("../resources/dictionaries/NSWL2020.txt");
-                const NSWL2023_WORD_LIST: &[u8] = include_bytes!("../resources/dictionaries/NSWL2023.txt");
-                const NWL2018_WORD_LIST: &[u8] = include_bytes!("../resources/dictionaries/NWL2018.txt");
-                const NWL2020_WORD_LIST: &[u8] = include_bytes!("../resources/dictionaries/NWL2020.txt");
-                const NWL2023_WORD_LIST: &[u8] = include_bytes!("../resources/dictionaries/NWL2023.txt");
-
-                let dictionary_files: [(&str, &[u8]); 8] = [
-                    ("CSW21.txt", CSW21_WORD_LIST),
-                    ("CSW24.txt", CSW24_WORD_LIST),
-                    ("NSWL2018.txt", NSWL2018_WORD_LIST),
-                    ("NSWL2020.txt", NSWL2020_WORD_LIST),
-                    ("NSWL2023.txt", NSWL2023_WORD_LIST),
-                    ("NWL2018.txt", NWL2018_WORD_LIST),
-                    ("NWL2020.txt", NWL2020_WORD_LIST),
-                    ("NWL2023.txt", NWL2023_WORD_LIST),
-                ];
-
-                let dictionaries_rw_dir =
+                let dictionaries_rw_dir: PathBuf =
                     app
                     .path()
                     .app_data_dir()
@@ -48,28 +33,41 @@ pub fn run() {
 
                 std::fs::create_dir_all(&dictionaries_rw_dir)
                     .expect(
-                        &format!("Failed to create_dir_all for dictionaries_rw_dir at {:?}", dictionaries_rw_dir.display())
+                        &format!(
+                            "Failed to create_dir_all for dictionaries_rw_dir at '{:?}'",
+                            dictionaries_rw_dir
+                        )
                     );
 
-                for dictionary_file in dictionary_files {
+                for file_name in DICTIONARY_FILES  {
 
-                    let ( file_name, content ) = dictionary_file;
+                    let dictionary_source_file_path =
+                        get_dictionary_files_dir(app)
+                        .join(file_name);
 
-                    let to = dictionaries_rw_dir.join(file_name);
+                    let contents = match app.fs().read_to_string(&dictionary_source_file_path) {
+                        Ok(contents) => contents,
+                        Err(error) => {
+                            println!(
+                                "Failed to extract dictionary contents at '{:?}' error: {:?}",
+                                dictionary_source_file_path,
+                                error
+                            );
+                            continue;
+                        }
+                    };
 
-                    std::fs::write(&to, content)
-                        .expect(
-                            &format!(
-                                "Failed to created dictionary file {:?} at {:?}",
-                                file_name,
-                                to.display()
-                            )
-                        );
+                    let dictionary_destination_file_path = dictionaries_rw_dir.join(file_name);
 
-                    println!(
-                        "Successfully created dictionary file {:?} at {:?}",
-                        file_name,
-                        to.display()
+                    std::fs::write(
+                        &dictionary_destination_file_path,
+                        &contents
+                    ).expect(
+                        &format!(
+                            "Failed to write dictionary from '{:?}' to '{:?}'",
+                            dictionary_source_file_path,
+                            dictionary_destination_file_path
+                        )
                     );
 
                 };
@@ -77,7 +75,12 @@ pub fn run() {
                 let dictionary =
                     features::dictionaries::Dictionaries::new(
                         &dictionaries_rw_dir
-                    ).expect("Failed to create dictionary");
+                    ).expect(
+                        &format!(
+                            "Failed to create dictionary with directory '{:?}'",
+                            dictionaries_rw_dir
+                        )
+                    );
 
                 let dictionaries_state =
                     commands::dictionaries::DictionariesState::new(
@@ -97,6 +100,6 @@ pub fn run() {
             commands::dictionaries::lookup_word,
         ])
         .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .expect("Failed to build tauri application");
 
 }
