@@ -29,7 +29,8 @@ Add a demonstration video or GIF here.
 The recommended development environment is:
 
 - [VS Code](https://code.visualstudio.com/)
-- [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) - [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+- [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode)
+- [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
 
 ## Prerequisites
 
@@ -185,12 +186,12 @@ ANDROID_HOME=C:\Users\user_name\AppData\Local\Android\Sdk
 
 Initialize the Tauri Android project:
 ```
-npm run android-build-init
+npm run tauri-android-build-init
 ```
 
 Build the Android debug APK:
 ```
-npm run android-build-debug
+npm run tauri-android-build-debug
 ```
 
 The resulting APK will be generated in the Tauri Android build output directory.
