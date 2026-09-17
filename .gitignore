@@ -31,4 +31,5 @@ src-tauri/gen/
 
 # Dictionaries are copy righted content
 # Cannot host them publicly
-/src-tauri/resources/dictionaries/
+/src-tauri/resources/dictionaries/*
+!/src-tauri/resources/dictionaries/README.md
