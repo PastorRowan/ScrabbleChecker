@@ -7,23 +7,26 @@
         "node": ">=26.8.2"
     },
     "scripts": {
-        "dev": "vite",
+
+        "vite-help": "vite --help",
         "build": "tsc && vite build",
+        "dev": "vite",
         "preview": "vite preview",
+        "tauri-help": "tauri --help",
         "tauri": "tauri",
+        "tauri-dev": "tauri dev",
 
+        "installed-target-list": "rustup target list --installed",
 
-        "Run this before android-build-xxxx": "echo ^^^^",
-        "android-build-init-help": "tauri android init --help",
-        "android-build-init": "tauri android init",
+        "tauri-windows-build-help": "tauri build --help",
+        "tauri-windows-build": "tauri build --runner cargo --debug -target x86_64-pc-windows-msvc",
 
-        "Run 'android-build-init' before then run with command line in adminastrator mode": "echo ^",
-        "Also make sure to have android studio installed with:": "echo ^",
-        "Android SDK, Android NDK 25, SDK Command-line Tools, and Java 25": "echo ^",
-        "ANDROID_HOME enviroment variable is 'C:\\Users\\user_name\\AppData\\Local\\Android\\Sdk'": "echo ^",
-        "rust targets will be installed automatically": "echo ^",
+        "tauri-android-build-init-help": "tauri android init --help",
+        "tauri-android-build-init": "tauri android init",
+
         "android-build-help": "tauri android build --help",
         "android-build-debug": "tauri android build --apk --target aarch64 --split-per-abi --debug"
+
     },
     "dependencies": {
         "@emotion/react": "^11.14.0",

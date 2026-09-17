@@ -31,7 +31,7 @@
             "icons/icon.icns",
             "icons/icon.ico"
         ],
-        "resources": ["resources/**/*txt"],
+        "resources": ["resources/dictionaries/**/*txt"],
         "android": {
             "versionCode": 100,
             "minSdkVersion": 28

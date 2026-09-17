@@ -52,7 +52,15 @@ fn main() {
             continue;
         };
 
-        dictionary_files.push(file_name.to_string());
+        let file_name_string = file_name.to_string();
+
+        dictionary_files.push(file_name_string.clone());
+
+        println!(
+            "Successfully added dictionary file name '{:?}' from '{:?}' to dictionary_files",
+            &file_name_string,
+            &path
+        );
 
     };
 

@@ -12,15 +12,19 @@ use tauri_plugin_fs::FsExt;
 include!(concat!(env!("OUT_DIR"), "/dictionary_files.rs"));
 
 pub fn get_dictionary_files_dir(app: &mut tauri::App) -> PathBuf {
-    return app.path()
+    return
+        app
+        .path()
         .resource_dir()
         .expect("Failed to get resources directory")
+        .join("resources")
         .join("dictionaries");
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_fs::init())
         .setup(
             |app: &mut tauri::App| {
 
