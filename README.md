@@ -49,11 +49,6 @@ git clone https://github.com/PastorRowan/ScrabbleChecker.git
 
 ### 2. Set Up the Scrabble Dictionaries
 
-ScrabbleChecker loads its Scrabble dictionaries from the following directory:
-```
-src-tauri/resources/dictionaries
-```
-
 Additional Scrabble dictionaries can be added. See the [dictionary setup guide](src-tauri/resources/dictionaries/README.md) for more info.
 
 ### 3. Traverse to the project directory
