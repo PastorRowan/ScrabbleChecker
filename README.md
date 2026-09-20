@@ -13,7 +13,7 @@ A cross-platform Tauri application that checks whether a word is valid in Scrabb
 
 ## Demo
 
-Add a demonstration video or GIF here.
+[![Getting started video](screenshots/getting_started_video_thumbnail.jpg)](https://youtu.be/Kj1ivWSVZM4)
 
 ## Technologies
 
