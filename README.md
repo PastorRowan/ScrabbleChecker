@@ -19,6 +19,7 @@ Add a demonstration video or GIF here.
 
 - Tauri
 - Rust
+- React
 - TypeScript
 - JavaScript
 - HTML
