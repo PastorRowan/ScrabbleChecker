@@ -41,7 +41,7 @@ ABANDON To give up completely.
 
 Multiple dictionary files can be placed in the `dictionaries` directory. ScrabbleChecker uses these files for word validation.
 
-See [ENABLE.txt](src-tauri/resources/dictionaries/ENABLE.txt) for an example of what the dictionary `.txt` file should look like
+See [ENABLE.txt](ENABLE.txt) for an example of what the dictionary `.txt` file should look like
 
 The script used to generate the `ENABLE.txt` is available in the following repository:
 
