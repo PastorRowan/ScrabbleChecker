@@ -49,12 +49,7 @@ git clone https://github.com/PastorRowan/ScrabbleChecker.git
 
 ### 2. Set Up the Scrabble Dictionaries
 
-ScrabbleChecker requires one or more Scrabble dictionary files to perform word validation.
-
-Follow the dictionary [setup guide](https://github.com/PastorRowan/ScrabbleChecker/blob/main/src-tauri/resources/README.md) to obtain the required dictionary files and place them in the correct directory.
-
-> [!IMPORTANT]
-> The dictionary files must be placed in src-tauri/resources/dictionaries before running the application otherwise the application will run but have no dictionaries to select.
+You can optionally add additional Scrabble dictionary `.txt` files to the same directory. ScrabbleChecker will automatically detect the dictionary files in this directory and make them available for selection within the application
 
 ### 3. Traverse to the project directory
 ```
