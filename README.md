@@ -13,7 +13,7 @@ A cross-platform Tauri application that checks whether a word is valid in Scrabb
 
 ## Demo
 
-[![Getting started video](screenshots/getting_started_video_thumbnail.jpg)](https://youtu.be/Kj1ivWSVZM4)
+[Demo](videos/ScrabbleChecker_demo.gif)
 
 ## Technologies
 
@@ -41,6 +41,10 @@ The recommended development environment is:
 - [Tauri prerequisites](https://tauri.app/start/prerequisites/) for your target platform
 
 ## Getting Started
+
+[![Getting started video](screenshots/getting_started_video_thumbnail.jpg)](https://youtu.be/Kj1ivWSVZM4)
+
+See [videos/ScrabbleChecker_getting_started.mp4](videos/ScrabbleChecker_getting_started.mp4) for the original walkthrough video.
 
 ### 1. Clone the Repository
 ```
