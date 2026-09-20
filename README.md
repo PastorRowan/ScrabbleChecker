@@ -92,6 +92,7 @@ ScrabbleChecker/
 │ │       ├── example_dictionary_3.txt
 │ │       ├── ...
 │ │       ├── example_dictionary_n.txt
+│ │       ├── ENABLE.txt
 │ │       └── README.md                 # Dictionary directory setup documentation
 │ ├── src/                              # Rust source code
 │ ├── Cargo.toml                        # Rust dependencies and configuration

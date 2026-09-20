@@ -33,3 +33,4 @@ src-tauri/gen/
 # Cannot host them publicly
 /src-tauri/resources/dictionaries/*
 !/src-tauri/resources/dictionaries/README.md
+!/src-tauri/resources/dictionaries/ENABLE.txt
