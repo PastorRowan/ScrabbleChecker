@@ -13,7 +13,7 @@ A cross-platform Tauri application that checks whether a word is valid in Scrabb
 
 ## Demo
 
-[Demo](videos/ScrabbleChecker_demo.gif)
+![ScrabbleChecker Demo](videos/ScrabbleChecker_demo.gif)
 
 ## Technologies
 
