@@ -49,7 +49,8 @@ git clone https://github.com/PastorRowan/ScrabbleChecker.git
 
 ### 2. Set Up the Scrabble Dictionaries
 
-You can optionally add additional Scrabble dictionary `.txt` files to the same directory. ScrabbleChecker will automatically detect the dictionary files in this directory and make them available for selection within the application
+Additional Scrabble dictionaries can optionally be added to `src-tauri/resources/dictionaries` See the dictionaries setup [README.md](src-tauri/resources/dictionaries/README.md) for more info.
+ScrabbleChecker will automatically detect the dictionary files in this directory and make them available for selection within the application
 
 ### 3. Traverse to the project directory
 ```
